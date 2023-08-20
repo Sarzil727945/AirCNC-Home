@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { FcGoogle } from 'react-icons/fc'
-import { useContext, useRef } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { AuthContext } from '../../providers/AuthProvider'
 import { TbFidgetSpinner } from 'react-icons/tb'
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 
 const Login = () => {
   const { loading, setLoading, signIn, signInWithGoogle, resetPassword } =
@@ -58,6 +59,16 @@ const Login = () => {
         toast.error(err.message)
       })
   }
+
+   // passwordShown function start 
+   const [passwordShown, setPasswordShown] = useState(false);
+   const [passwordIcon, setPasswordIcon] = useState(false)
+ 
+   const togglePassword = () => {
+     setPasswordShown(!passwordShown);
+     setPasswordIcon(!passwordIcon)
+   };
+   // passwordShown function end
   return (
     <div className='flex justify-center items-center min-h-screen'>
       <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
@@ -95,14 +106,21 @@ const Login = () => {
                   Password
                 </label>
               </div>
-              <input
-                type='password'
-                name='password'
-                id='password'
-                required
-                placeholder='*******'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-rose-500 bg-gray-200 text-gray-900'
-              />
+              <div className=' relative '>
+                <input
+                  type={passwordShown ? "text" : "password"}
+                  name='password'
+                  id='password'
+                  required
+                  placeholder='*******'
+                  className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-rose-500 bg-gray-200 text-gray-900'
+                />
+                <div className=' absolute end-4 top-3'>
+                  <p className=' text-lg' onClick={togglePassword} >{
+                    passwordIcon ? <AiFillEye /> : <AiFillEyeInvisible />
+                  }</p>
+                </div>
+              </div>
             </div>
           </div>
 

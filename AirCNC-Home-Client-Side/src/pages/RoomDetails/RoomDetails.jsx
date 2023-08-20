@@ -1,7 +1,7 @@
 import React from 'react'
 import Container from '../../components/Shared/Container'
 import Header from '../../components/Rooms/Header'
-import RoomInfo from '../../components/Rooms/ RoomInfo'
+import RoomInfo from '../../components/Rooms/RoomInfo'
 import RoomReservation from '../../components/Rooms/RoomReservation'
 
 const RoomDetails = () => {

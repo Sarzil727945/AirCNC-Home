@@ -1,11 +1,14 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { FcGoogle } from 'react-icons/fc'
-import { useContext, useRef } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { AuthContext } from '../../providers/AuthProvider'
 import { TbFidgetSpinner } from 'react-icons/tb'
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+const img_hosting_token = import.meta.env.VITE_Image_Upload_token;
 
 const SignUp = () => {
+
   const {
     loading,
     setLoading,
@@ -16,6 +19,7 @@ const SignUp = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from?.pathname || '/'
+
 
   // Handle user registration
   const handleSubmit = event => {
@@ -29,10 +33,8 @@ const SignUp = () => {
     const formData = new FormData()
     formData.append('image', image)
 
-    const url = `https://api.imgbb.com/1/upload?key=${
-      import.meta.env.VITE_IMGBB_KEY
-    }`
-    fetch(url, {
+    const img_hosting_url = `https://api.imgbb.com/1/upload?key=${img_hosting_token}`;
+    fetch(img_hosting_url, {
       method: 'POST',
       body: formData,
     })
@@ -67,6 +69,16 @@ const SignUp = () => {
 
     return
   }
+
+  // passwordShown function start 
+  const [passwordShown, setPasswordShown] = useState(false);
+  const [passwordIcon, setPasswordIcon] = useState(false)
+
+  const togglePassword = () => {
+    setPasswordShown(!passwordShown);
+    setPasswordIcon(!passwordIcon)
+  };
+  // passwordShown function end
 
   // Handle google signin
   const handleGoogleSignIn = () => {
@@ -140,14 +152,21 @@ const SignUp = () => {
                   Password
                 </label>
               </div>
-              <input
-                type='password'
-                name='password'
-                id='password'
-                required
-                placeholder='*******'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-rose-500 bg-gray-200 text-gray-900'
-              />
+              <div className=' relative '>
+                <input
+                  type={passwordShown ? "text" : "password"}
+                  name='password'
+                  id='password'
+                  required
+                  placeholder='*******'
+                  className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-rose-500 bg-gray-200 text-gray-900'
+                />
+                <div className=' absolute end-4 top-3'>
+                  <p className=' text-lg' onClick={togglePassword} >{
+                    passwordIcon ? <AiFillEye /> : <AiFillEyeInvisible />
+                  }</p>
+                </div>
+              </div>
             </div>
           </div>
 

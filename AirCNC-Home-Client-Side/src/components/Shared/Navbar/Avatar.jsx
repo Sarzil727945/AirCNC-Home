@@ -6,11 +6,10 @@ const Avatar = () => {
   const { user } = useContext(AuthContext)
   return (
     <img
-      className='rounded-full'
+      className='rounded-full w-[45px] h-[45px]'
       src={user && user.photoURL ? user.photoURL : avatarImg}
       alt='profile'
-      height='30'
-      width='30'
+    
     />
   )
 }
