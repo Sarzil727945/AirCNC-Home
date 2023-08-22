@@ -49,6 +49,7 @@ async function run() {
     // server link start
     const usersCollection = client.db('AirCNC-Home').collection('users');
     const roomsCollection = client.db('AirCNC-Home').collection('rooms');
+    const bookingsCollection = client.db('AirCNC-Home').collection('bookings');
     // server link end 
 
     // jwt localhost start

@@ -13,7 +13,7 @@ const Rooms = () => {
   const [loading, setLoading] = useState(false)
   useEffect(() => {
     setLoading(true)
-    fetch('http://localhost:5000/rooms')
+    fetch('https://air-cnc-home-server-side.vercel.app/rooms')
       .then(res => res.json())
       .then(data => {
         if (category) {

@@ -20,6 +20,7 @@ const Login = () => {
     const password = event.target.password.value
     signIn(email, password)
       .then(result => {
+        toast.success('Login successful')
         console.log(result.user)
         navigate(from, { replace: true })
       })
@@ -34,10 +35,29 @@ const Login = () => {
   const handleGoogleSignIn = () => {
     signInWithGoogle()
       .then(result => {
-        console.log(result.user)
-        navigate(from, { replace: true })
-      })
-      .catch(err => {
+        const user = result.user;
+        // user information post data page start 
+        const saveUser = { name: user.displayName, email: user.email, img: user.photoURL }
+        fetch('https://air-cnc-home-server-side.vercel.app/users', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify(saveUser)
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.insertedId) {
+
+              // Verification(currentUser)
+            }
+            if (user) {
+              toast.success('Google Login successful')
+            }
+            navigate(from, { replace: true })
+          })
+        // user information data post data page end
+      }).catch(err => {
         setLoading(false)
         console.log(err.message)
         toast.error(err.message)
@@ -60,15 +80,15 @@ const Login = () => {
       })
   }
 
-   // passwordShown function start 
-   const [passwordShown, setPasswordShown] = useState(false);
-   const [passwordIcon, setPasswordIcon] = useState(false)
- 
-   const togglePassword = () => {
-     setPasswordShown(!passwordShown);
-     setPasswordIcon(!passwordIcon)
-   };
-   // passwordShown function end
+  // passwordShown function start 
+  const [passwordShown, setPasswordShown] = useState(false);
+  const [passwordIcon, setPasswordIcon] = useState(false)
+
+  const togglePassword = () => {
+    setPasswordShown(!passwordShown);
+    setPasswordIcon(!passwordIcon)
+  };
+  // passwordShown function end
   return (
     <div className='flex justify-center items-center min-h-screen'>
       <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>

@@ -5,7 +5,7 @@ import { useContext, useRef, useState } from 'react'
 import { AuthContext } from '../../providers/AuthProvider'
 import { TbFidgetSpinner } from 'react-icons/tb'
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-const img_hosting_token = import.meta.env.VITE_Image_Upload_token;
+import { imageUpload } from '../../api/imageUpload'
 
 const SignUp = () => {
 
@@ -20,31 +20,30 @@ const SignUp = () => {
   const location = useLocation()
   const from = location.state?.from?.pathname || '/'
 
-
   // Handle user registration
-  const handleSubmit = event => {
+  const handleSubmit = (event) => {
     event.preventDefault()
-    const name = event.target.name.value
-    const email = event.target.email.value
-    const password = event.target.password.value
+    const name = event.target.name.value;
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    const image = event.target.image.files[0];
 
     // Image Upload
-    const image = event.target.image.files[0]
-    const formData = new FormData()
-    formData.append('image', image)
-
-    const img_hosting_url = `https://api.imgbb.com/1/upload?key=${img_hosting_token}`;
-    fetch(img_hosting_url, {
-      method: 'POST',
-      body: formData,
-    })
-      .then(res => res.json())
-      .then(imageData => {
+    imageUpload(image)
+    .then(imageData => {
         const imageUrl = imageData.data.display_url
-
         createUser(email, password)
           .then(result => {
             updateUserProfile(name, imageUrl)
+            const saveUser = { name: name, email: email, userImg: imageUrl }
+            fetch('https://air-cnc-home-server-side.vercel.app/users', {
+              method: 'POST',
+              headers: {
+                'content-type': 'application/json'
+              },
+              body: JSON.stringify(saveUser)
+            })
+              .then(res => res.json())
               .then(() => {
                 toast.success('Signup successful')
                 navigate(from, { replace: true })
@@ -84,10 +83,29 @@ const SignUp = () => {
   const handleGoogleSignIn = () => {
     signInWithGoogle()
       .then(result => {
-        console.log(result.user)
-        navigate(from, { replace: true })
-      })
-      .catch(err => {
+        const user = result.user;
+        // user information post data page start 
+        const saveUser = { name: user.displayName, email: user.email, img: user.photoURL }
+        fetch('https://air-cnc-home-server-side.vercel.app/users', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify(saveUser)
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.insertedId) {
+
+              // Verification(currentUser)
+            }
+            if (user) {
+              toast.success('Google Signup successful')
+            }
+            navigate(from, { replace: true })
+          })
+        // user information data post data page end
+      }).catch(err => {
         setLoading(false)
         console.log(err.message)
         toast.error(err.message)
