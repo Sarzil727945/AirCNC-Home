@@ -4,6 +4,7 @@ import { imageUpload } from '../../api/imageUpload';
 import { AuthContext } from '../../providers/AuthProvider';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { addRoom } from '../../api/rooms';
 
 const AddRoom = () => {
      const navigate = useNavigate()
@@ -54,34 +55,28 @@ const AddRoom = () => {
                          },
 
                     }
-                    fetch('https://air-cnc-home-server-side.vercel.app/rooms', {
-                         method: 'POST',
-                         headers: {
-                           'content-type': 'application/json'
-                         },
-                         body: JSON.stringify(roomData)
-                       })
-                       .then(res => res.json())
-                       .then(() => {
-                         toast.success('Room Add successful')
-                         navigate('/')
-                       })
-                       .catch(err => {
-                         setLoading(false)
-                         console.log(err.message)
-                         toast.error(err.message)
-                       })
+                    addRoom(roomData)
+                         .then(() => {
+                              toast.success('Room Add successful')
+                              navigate('/')
+                         })
+                         .catch(err => {
+                              setLoading(false)
+                              console.log(err.message)
+                              toast.error(err.message)
+                         })
                     setLoading(false)
                })
                .catch(error => {
                     setLoading(false)
                })
      }
+     
      const handleImageChange = (image) => {
           setUploadButtonText(image?.name)
      }
 
-     const handleDates = (ranges)=>{
+     const handleDates = (ranges) => {
           setDates(ranges?.selection)
      }
      return (

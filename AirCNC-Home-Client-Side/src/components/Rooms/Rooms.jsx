@@ -4,6 +4,7 @@ import Card from './Card'
 import Loader from '../Shared/Loader'
 import { useSearchParams } from 'react-router-dom'
 import Heading from '../Heading/Heading'
+import { getAllRooms } from '../../api/rooms'
 
 const Rooms = () => {
   const [params, setParams] = useSearchParams()
@@ -13,8 +14,7 @@ const Rooms = () => {
   const [loading, setLoading] = useState(false)
   useEffect(() => {
     setLoading(true)
-    fetch('https://air-cnc-home-server-side.vercel.app/rooms')
-      .then(res => res.json())
+    getAllRooms()
       .then(data => {
         if (category) {
           const filtered = data.filter(room => room.category === category)

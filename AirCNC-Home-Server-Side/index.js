@@ -73,24 +73,29 @@ async function run() {
       next();
     }
 
-    // allPost added post mongoDB start
+    // add a room mongoDB start
     app.post('/rooms', async (req, res) => {
       const newAdd = req.body;
       const result = await roomsCollection.insertOne(newAdd)
       res.send(result);
     });
-    // allPost added post mongoDB end
+    // add a room mongoDB end
 
-    // get allPost data server start
+    // get all rooms data start
     app.get('/rooms', async (req, res) => {
-      let query = {};
-      if (req.query?.email) {
-        query = { email: req.query.email }
-      }
-      const result = await roomsCollection.find(query).toArray();
+      const result = await roomsCollection.find().toArray();
       res.send(result);
     })
-    //  get allPost data server end 
+    //  get all rooms data end 
+
+    // get a single room data start
+    app.get('/rooms/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await roomsCollection.findOne(query);
+      res.send(result);
+    })
+    //  get a single room data end 
 
     // post data search part start
     app.get("/roomsSearchText/:text", async (req, res) => {
@@ -137,7 +142,6 @@ async function run() {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
       const updatedClasses = req.body;
-
       const updateDoc = {
         $set: {
           status: updatedClasses.status
