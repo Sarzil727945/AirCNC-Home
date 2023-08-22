@@ -169,13 +169,36 @@ async function run() {
     });
     // user data post dataBD exit
 
-    // admin user information get  start
+    // server data update start
+    app.put('/users/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const query = { email: email }
+      const options = { upsert: true };
+      const upDataDoc = {
+        $set: user,
+      }
+      const result = await usersCollection.updateOne(query, upDataDoc, options);
+      res.send(result)
+    })
+    // server data update end 
+
+    // all user information get  start
     app.get('/users', async (req, res) => {
       const cursor = usersCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     })
-    // admin user information get end
+    // all user information get end
+
+    // one role check start
+    app.get('/users/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email }
+      const result = await usersCollection.findOne(query);
+      res.send(result);
+    })
+    // user role check end
 
     // allUser data search part start
     app.get("/userSearchText/:text", async (req, res) => {
@@ -201,27 +224,7 @@ async function run() {
     })
     // user data delete mongoDB  exit
 
-    // user admin check start
-    app.get('/users/admin/:email', verifyJwt, async (req, res) => {
-      const email = req.params.email;
 
-      if (req.decoded.email !== email) {
-        res.send({ admin: false })
-      }
-
-      // jwt verifyJwt start
-      const decodedEmail = req.decoded.email;
-      if (email !== decodedEmail) {
-        return res.status(403).send({ error: true, message: 'forbidden access' })
-      }
-      // jwt verifyJwt end
-
-      const query = { email: email }
-      const user = await usersCollection.findOne(query);
-      const result = { admin: user?.role === 'admin' }
-      res.send(result);
-    })
-    // user admin check end
 
     // user admin role added start
     app.patch('/users/admin/:id', async (req, res) => {

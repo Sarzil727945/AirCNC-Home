@@ -3,19 +3,38 @@ import Avatar from './Avatar'
 import { useCallback, useContext, useState } from 'react'
 import { AuthContext } from '../../../providers/AuthProvider'
 import { Link } from 'react-router-dom'
+import HostModal from '../../Modal/HostRequestModal'
+import { becomeHost } from '../../../api/auth'
+import { toast } from 'react-hot-toast'
 
 const MenuDropdown = () => {
-  const { user, logOut } = useContext(AuthContext)
+  const { user, logOut, role, setRole } = useContext(AuthContext)
   const [isOpen, setIsOpen] = useState(false)
-  //   const toggleOpen = useCallback(() => {
-  //     setIsOpen(value => !value)
-  //   }, [])
+  const [modal, setModal] = useState(false)
+
+  const modalHandler = (email) => {
+    becomeHost(email)
+    toast.success('Your are host now. Post Rooms !!')
+    closeModal();
+    setRole('host')
+  }
+  const closeModal = () => {
+    setModal(false)
+  }
+
+
   return (
     <div className='relative'>
       <div className='flex flex-row items-center gap-3'>
         {/* Aircnc btn */}
-        <div className='hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer'>
-          AirCNC your home
+        <div className={role ? 'hidden md:block text-sm font-semibold    transition px-16 py-3' : 'hidden md:block text-sm font-semibold    transition'}>
+          {
+            !role && <button
+              className='cursor-pointer rounded-full hover:bg-neutral-100 py-3 px-4'
+              disabled={!user}
+              onClick={() => setModal(true)}
+            >AirCNC your home</button>
+          }
         </div>
         {/* Dropdown btn */}
         <div
@@ -46,7 +65,10 @@ const MenuDropdown = () => {
                   Dashboard
                 </Link>
                 <div
-                  onClick={logOut}
+                  onClick={() => {
+                    setRole(null)
+                    logOut()
+                  }}
                   className='px-4 py-3 hover:bg-neutral-100 transition font-semibold cursor-pointer'
                 >
                   Logout
@@ -71,6 +93,13 @@ const MenuDropdown = () => {
           </div>
         </div>
       )}
+
+      <HostModal
+        modalHandler={modalHandler}
+        isOpen={modal}
+        email={user?.email}
+        closeModal={closeModal}
+      ></HostModal>
     </div>
   )
 }
