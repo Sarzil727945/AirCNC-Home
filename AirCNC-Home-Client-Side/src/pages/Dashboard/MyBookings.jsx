@@ -1,4 +1,21 @@
+import { useContext, useEffect, useState } from "react"
+import { AuthContext } from "../../providers/AuthProvider"
+import { getBookings } from "../../api/booking"
+import TableRow from "../../components/Dashboard/TableRow"
+
 const MyBookings = () => {
+  const { user } = useContext(AuthContext)
+  const [myBookings, setMyBookings] = useState([])
+
+  useEffect(() => {
+    fetchBookings()
+  }, [user])
+
+  const fetchBookings = () => {
+    getBookings(user?.email)
+      .then(data => setMyBookings(data))
+  }
+
   return (
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-8'>
@@ -45,7 +62,13 @@ const MyBookings = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody>{/* Table Data */}</tbody>
+              <tbody>{myBookings && myBookings.map(booking =>(
+                <TableRow 
+                key={booking._id}
+                booking={booking}
+                fetchBookings = {fetchBookings}
+                ></TableRow>
+              ))}</tbody>
             </table>
           </div>
         </div>

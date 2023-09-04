@@ -152,6 +152,21 @@ async function run() {
     })
     //  allPost data patch end
 
+    //  update booking patch start 
+    app.patch('/rooms/status/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const status = req.body.status;
+      const updateDoc = {
+        $set: {
+          booked: status,
+        }
+      }
+      const result = await roomsCollection.updateOne(query, updateDoc)
+      res.send(result)
+    })
+    //  update booking patch end
+
     // user data post dataBD start 
     app.post('/users', async (req, res) => {
       const user = req.body;
@@ -224,7 +239,43 @@ async function run() {
     })
     // user data delete mongoDB  exit
 
+    // get my bookings data server start
+    app.get('/bookings', async (req, res) => {
+      const email = req.query?.email
+      if (!email) {
+        res.send([])
+      }
+      const query = { 'guest.email': email }
+      const result = await bookingsCollection.find(query).toArray();
+      res.send(result);
+    })
+    //  get my bookings data server end 
 
+    // save a booking mongoDB start
+    app.post('/bookings', async (req, res) => {
+      const booking = req.body;
+      const result = await bookingsCollection.insertOne(booking)
+      res.send(result);
+    });
+    // add a booking mongoDB end
+
+    //delete a booking mongoDB start
+    app.delete('/bookings/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await bookingsCollection.deleteOne(query);
+      res.send(result);
+    })
+    //delete a booking mongoDB end
+
+    // user data delete mongoDB start
+    app.delete('/users/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await usersCollection.deleteOne(query);
+      res.send(result);
+    })
+    // user data delete mongoDB  exit
 
     // user admin role added start
     app.patch('/users/admin/:id', async (req, res) => {
