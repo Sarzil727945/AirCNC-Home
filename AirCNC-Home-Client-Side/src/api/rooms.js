@@ -24,3 +24,10 @@ export const getRoom = async (id) => {
      const data = await response.json()
      return data
 }
+
+// get filtered room of host 
+export const getHostRoom = async (email) => {
+     const response = await fetch(`${import.meta.env.VITE_API_URL}/rooms/${email}`)
+     const data = await response.json()
+     return data
+}

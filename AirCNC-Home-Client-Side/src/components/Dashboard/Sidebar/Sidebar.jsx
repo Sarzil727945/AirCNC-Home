@@ -9,10 +9,11 @@ import { AuthContext } from '../../../providers/AuthProvider'
 import Logo from '../../Shared/Navbar/Logo'
 import { BsFillHouseAddFill } from 'react-icons/bs'
 import GuestMenu from './GuestMenu'
+import HostMenu from './HostMenu'
 const Sidebar = () => {
   const navigate = useNavigate()
   const [toggle, setToggle] = useState(false)
-  const { user, logOut } = useContext(AuthContext)
+  const { user, logOut, role } = useContext(AuthContext)
 
   const [isActive, setActive] = useState('false')
   const toggleHandler = event => {
@@ -80,27 +81,30 @@ const Sidebar = () => {
           {/* Nav Items */}
           <div className='flex flex-col justify-between flex-1 mt-6'>
             <nav>
-              <>
-                <label
-                  htmlFor='Toggle3'
-                  className='inline-flex w-full justify-center items-center px-2 rounded-md cursor-pointer text-gray-800'
-                >
-                  <input
-                    onChange={toggleHandler}
-                    id='Toggle3'
-                    type='checkbox'
-                    className='hidden peer'
-                  />
-                  <span className='px-4 py-1 rounded-l-md bg-rose-400 peer-checked:bg-gray-300'>
-                    Guest
-                  </span>
-                  <span className='px-4 py-1 rounded-r-md bg-gray-300 peer-checked:bg-rose-400'>
-                    Host
-                  </span>
-                </label>
-                {/* Menu Links */}
-               <GuestMenu></GuestMenu>
-              </>
+            {
+             role && role === 'host' ?   <>
+             <label
+               htmlFor='Toggle3'
+               className='inline-flex w-full justify-center items-center px-2 rounded-md cursor-pointer text-gray-800'
+             >
+               <input
+                 onChange={toggleHandler}
+                 id='Toggle3'
+                 type='checkbox'
+                 className='hidden peer'
+               />
+               <span className='px-4 py-1 rounded-l-md bg-rose-400 peer-checked:bg-gray-300'>
+                 Guest
+               </span>
+               <span className='px-4 py-1 rounded-r-md bg-gray-300 peer-checked:bg-rose-400'>
+                 Host
+               </span>
+             </label>
+             {/* Menu Links */}
+             {toggle ? <HostMenu></HostMenu> : <GuestMenu></GuestMenu>}
+           </> :  <GuestMenu></GuestMenu>
+
+            }
             </nav>
           </div>
         </div>
